@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MediFind | Search Results</title>
+
+    <link rel="stylesheet" href="/static/css/style.css?v=8">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+
+        <a href="/" class="logo">
+            Medi<span>Find.</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/#about">About</a>
+            <a href="/registration">Register</a>
+            <a href="/web/login" class="nav-login">Login</a>
+        </div>
+
+    </nav>
+
+
+    <!-- SEARCH HERO SECTION -->
+    <section class="results-hero">
+
+        <span class="hero-label">MEDICINE DISCOVERY</span>
+
+        <h1>Find your medicine.</h1>
+
+        <p>
+            Discover pharmacies with available stock
+            and compare medicine prices.
+        </p>
+
+        <form action="/search" method="get" class="search-form">
+
+            <div class="search-input">
+
+                <span>⌕</span>
+
+                <input
+                    type="text"
+                    name="medicine"
+                    value="{{ medicine | e }}"
+                    placeholder="Search medicine name..."
+                    required
+                >
+
+            </div>
+
+            <button type="submit">
+                Search →
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- SEARCH RESULTS -->
+    <main class="results-container">
+
+        <div class="results-heading">
+
+            <div>
+
+                <span>SEARCH RESULTS</span>
+
+                <h2>Available Pharmacies</h2>
+
+                <p>
+                    Results for
+                    <strong>"{{ medicine | e }}"</strong>
+                </p>
+
+            </div>
+
+            <a href="/" class="back-link">
+                ← Back Home
+            </a>
+
+        </div>
+
+
+        {% if results %}
+
+            <div class="results-grid">
+
+                {% for item in results %}
+
+                    <article class="result-card">
+
+                        <!-- MEDICINE HEADER -->
+                        <div class="medicine-top">
+
+                            <div class="medicine-icon">
+                                ✚
+                            </div>
+
+                            <span class="stock-badge">
+                                In Stock
+                            </span>
+
+                        </div>
+
+
+                        <!-- MEDICINE DETAILS -->
+                        <h2>{{ item.medicine | e }}</h2>
+
+                        {% if item.generic_name %}
+
+                            <p class="generic-name">
+                                {{ item.generic_name | e }}
+                            </p>
+
+                        {% endif %}
+
+
+                        <div class="result-divider"></div>
+
+
+                        <!-- PHARMACY INFORMATION -->
+                        <div class="pharmacy-info">
+
+                            <span>PHARMACY</span>
+
+                            <h3>{{ item.pharmacy | e }}</h3>
+
+                            <p>
+                                {{ item.address | e }}
+                            </p>
+
+                            {% if item.landmark %}
+
+                                <p class="landmark">
+                                    📍 Nearby:
+                                    {{ item.landmark | e }}
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- STOCK AND PRICE -->
+                        <div class="stock-info">
+
+                            <div>
+
+                                <span>AVAILABLE</span>
+
+                                <strong>
+                                    {{ item.quantity }} units
+                                </strong>
+
+                            </div>
+
+                            <div>
+
+                                <span>PRICE</span>
+
+                                <strong class="price">
+                                    ₹{{ item.price }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CONTACT AND LOCATION -->
+                        <div class="result-footer">
+
+                            <!-- CALL PHARMACY -->
+                            {% if item.phone %}
+
+                                <a
+                                    href="tel:{{ item.phone | replace(' ', '') | replace('-', '') }}"
+                                    class="call-pharmacy"
+                                    title="Call {{ item.pharmacy }}"
+                                >
+                                    Call Pharmacy →
+                                </a>
+
+                            {% else %}
+
+                                <span class="disabled-call">
+                                    Phone unavailable
+                                </span>
+
+                            {% endif %}
+
+
+                            <!-- GOOGLE MAPS DIRECTIONS -->
+                            {% if item.latitude is not none
+                                  and item.longitude is not none %}
+
+                                <a
+                                    href="https://www.google.com/maps/dir/?api=1&destination={{ item.latitude }},{{ item.longitude }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Get Directions ↗
+                                </a>
+
+                            {% else %}
+
+                                <a
+                                    href="https://www.google.com/maps/search/?api=1&query={{ item.address | urlencode }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Find on Maps ↗
+                                </a>
+
+                            {% endif %}
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <!-- NO RESULTS -->
+            <div class="empty-results">
+
+                <div class="empty-icon">
+                    ⌕
+                </div>
+
+                <h2>No medicines found</h2>
+
+                <p>
+                    We couldn't find available stock for
+                    "{{ medicine | e }}".
+
+                    Try searching with another medicine name.
+                </p>
+
+                <a href="/" class="primary-btn">
+                    Search Again
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+        <h2>MediFind.</h2>
+
+        <p>Making medicine discovery easier.</p>
+
+        <p class="copyright">
+            © 2026 MediFind. All rights reserved.
+        </p>
+
+    </footer>
+
+</body>
+
+</html>

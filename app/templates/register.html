@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MediFind | Create Account</title>
+
+    <link rel="stylesheet" href="/static/css/style.css?v=10">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+
+        <a href="/" class="logo">
+            Medi<span>Find.</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/web/login">Login</a>
+        </div>
+
+    </nav>
+
+
+    <!-- REGISTRATION FORM -->
+    <main class="auth-container">
+
+        <p class="eyebrow">CUSTOMER ACCOUNT</p>
+
+        <h1>Create your account</h1>
+
+        <p>
+            Register to search for medicines and nearby pharmacies.
+        </p>
+
+
+        <!-- ERROR MESSAGES -->
+        {% if request.query_params.get('error') == 'email' %}
+            <p class="form-error">
+                This email is already registered. Please sign in.
+            </p>
+
+        {% elif request.query_params.get('error') == 'age' %}
+            <p class="form-error">
+                You must be at least 18 years old to register.
+            </p>
+
+        {% elif request.query_params.get('error') == 'password' %}
+            <p class="form-error">
+                Password must contain at least 8 characters.
+            </p>
+
+        {% elif request.query_params.get('error') == 'invalid' %}
+            <p class="form-error">
+                Please check your details and try again.
+            </p>
+        {% endif %}
+
+
+        <form
+            action="/web/register"
+            method="POST"
+            class="auth-form"
+        >
+
+            <div class="form-group">
+
+                <label for="name">Full name</label>
+
+                <input
+                    id="name"
+                    type="text"
+                    name="name"
+                    maxlength="100"
+                    autocomplete="name"
+                    placeholder="Enter your full name"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="email">Email</label>
+
+                <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    maxlength="150"
+                    autocomplete="email"
+                    placeholder="Enter your email"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="age">Age</label>
+
+                <input
+                    id="age"
+                    type="number"
+                    name="age"
+                    min="18"
+                    max="120"
+                    placeholder="Enter your age"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="password">Password</label>
+
+                <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    minlength="8"
+                    autocomplete="new-password"
+                    placeholder="Minimum 8 characters"
+                    required
+                >
+
+            </div>
+
+
+            <button type="submit">
+                Create Account →
+            </button>
+
+        </form>
+
+
+        <p class="auth-footnote">
+            Already registered?
+            <a href="/web/login">Sign in</a>
+        </p>
+
+    </main>
+
+</body>
+</html>

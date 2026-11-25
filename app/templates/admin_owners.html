@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediFind | Manage Owners</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=7">
+</head>
+
+<body class="pharmacy-admin-page">
+
+<nav class="navbar">
+    <h2>MediFind Admin</h2>
+    <div>
+        <a href="/web/admin/dashboard">Dashboard</a>
+        <a href="/web/logout">Logout</a>
+    </div>
+</nav>
+
+<main class="dashboard">
+
+    <h1>Manage Pharmacy Owners</h1>
+    <p>Assign pharmacy owners and manage their access.</p>
+
+    <section class="dashboard-card">
+        <h2>Registered Owners</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Assigned Pharmacy</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for owner in owners %}
+                <tr>
+                    <td>{{ owner.id }}</td>
+                    <td>{{ owner.name }}</td>
+                    <td>{{ owner.email }}</td>
+                    <td>
+                        {% if owner.pharmacy %}
+                            {{ owner.pharmacy.name }}
+                        {% else %}
+                            Not assigned
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="owner-status">Owner</span>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5">No pharmacy owners registered.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+</main>
+</body>
+</html>

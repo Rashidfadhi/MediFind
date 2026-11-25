@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediFind | Pharmacy Management</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=5"></head>
+<body class="pharmacy-admin-page">
+
+<nav class="navbar">
+    <h2>MediFind Admin</h2>
+    <div>
+        <a href="/web/admin/dashboard">Dashboard</a>
+        <a href="/web/logout">Logout</a>
+    </div>
+</nav>
+
+<main class="dashboard">
+    <h1>Pharmacy Management</h1>
+    <p>Manage registered pharmacies.</p>
+
+    {% if request.query_params.get('success') %}
+        <p>{{ request.query_params.get('success') }}</p>
+    {% endif %}
+
+    <section class="dashboard-card">
+        <h2>Add Pharmacy</h2>
+
+        <form action="/web/admin/pharmacies/add" method="POST">
+            <input name="name" placeholder="Pharmacy name" required>
+            <input name="address" placeholder="Address" required>
+            <input name="landmark" placeholder="Landmark">
+            <input name="phone" placeholder="Phone" required>
+            <input name="email" type="email" placeholder="Email" required>
+            <button type="submit">Add Pharmacy</button>
+        </form>
+    </section>
+
+    <h2>Registered Pharmacies</h2>
+
+    {% for pharmacy in pharmacies %}
+    <section class="dashboard-card">
+        <h3>{{ pharmacy.name }} — #{{ pharmacy.id }}</h3>
+
+        <form action="/web/admin/pharmacies/update/{{ pharmacy.id }}"
+              method="POST">
+
+            <input name="name" value="{{ pharmacy.name }}" required>
+            <input name="address" value="{{ pharmacy.address }}" required>
+            <input name="landmark" value="{{ pharmacy.landmark or '' }}">
+            <input name="phone" value="{{ pharmacy.phone }}" required>
+            <input name="email" type="email"
+                   value="{{ pharmacy.email }}" required>
+
+            <label>
+                <input type="checkbox" name="is_active" value="true"
+                       {% if pharmacy.is_active %}checked{% endif %}>
+                Active
+            </label>
+
+            <button type="submit">Save Changes</button>
+        </form>
+
+        {% if pharmacy.is_active %}
+        <form action="/web/admin/pharmacies/delete/{{ pharmacy.id }}"
+              method="POST">
+            <button type="submit">Deactivate Pharmacy</button>
+        </form>
+        {% else %}
+            <p>This pharmacy is inactive.</p>
+        {% endif %}
+    </section>
+    {% else %}
+        <p>No pharmacies registered yet.</p>
+    {% endfor %}
+
+</main>
+</body>
+</html>

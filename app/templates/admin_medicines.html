@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediFind | Medicine Management</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=3">
+</head>
+<body class="medicine-admin-page">
+
+
+<nav class="navbar">
+    <h2>MediFind Admin</h2>
+
+    <div>
+        <a href="/web/admin/dashboard">Dashboard</a>
+        <a href="/web/admin/pharmacies">Pharmacies</a>
+        <a href="/web/logout">Logout</a>
+    </div>
+</nav>
+
+<main class="dashboard">
+
+    <h1>Medicine Management</h1>
+    <p>Manage the MediFind medicine database.</p>
+
+    {% if request.query_params.get('success') %}
+        <p class="success-message">
+            {{ request.query_params.get('success') }}
+        </p>
+    {% endif %}
+
+    <!-- ADD MEDICINE -->
+    <section class="dashboard-card">
+        <h2>Add New Medicine</h2>
+
+        <form action="/web/admin/medicines/add" method="POST">
+
+            <input
+                type="text"
+                name="name"
+                placeholder="Medicine name"
+                required
+            >
+
+            <input
+                type="text"
+                name="brand"
+                placeholder="Brand"
+            >
+
+            <input
+                type="text"
+                name="generic_name"
+                placeholder="Generic name"
+                required
+            >
+
+            <input
+                type="text"
+                name="strength"
+                placeholder="Strength (e.g. 500mg)"
+            >
+
+            <input
+                type="text"
+                name="dosage_form"
+                placeholder="Dosage form (e.g. Tablet)"
+            >
+
+            <textarea
+                name="description"
+                placeholder="Medicine description"
+            ></textarea>
+
+            <button type="submit">Add Medicine</button>
+
+        </form>
+    </section>
+
+
+    <!-- MEDICINE LIST -->
+    <h2>Registered Medicines ({{ medicines|length }})</h2>
+
+    {% for medicine in medicines %}
+
+    <section class="dashboard-card">
+
+        <h3>{{ medicine.name }} — #{{ medicine.id }}</h3>
+
+        <form
+            action="/web/admin/medicines/update/{{ medicine.id }}"
+            method="POST"
+        >
+
+            <label>Medicine Name</label>
+            <input
+                type="text"
+                name="name"
+                value="{{ medicine.name }}"
+                required
+            >
+
+            <label>Brand</label>
+            <input
+                type="text"
+                name="brand"
+                value="{{ medicine.brand or '' }}"
+            >
+
+            <label>Generic Name</label>
+            <input
+                type="text"
+                name="generic_name"
+                value="{{ medicine.generic_name }}"
+                required
+            >
+
+            <label>Strength</label>
+            <input
+                type="text"
+                name="strength"
+                value="{{ medicine.strength or '' }}"
+            >
+
+            <label>Dosage Form</label>
+            <input
+                type="text"
+                name="dosage_form"
+                value="{{ medicine.dosage_form or '' }}"
+            >
+
+            <label>Description</label>
+            <textarea name="description">{{ medicine.description or '' }}</textarea>
+
+            <button type="submit">Save Changes</button>
+
+        </form>
+
+        <form
+            action="/web/admin/medicines/delete/{{ medicine.id }}"
+            method="POST"
+        >
+            <button type="submit" class="danger-button">
+                Delete Medicine
+            </button>
+        </form>
+
+    </section>
+
+    {% else %}
+
+        <p>No medicines registered yet.</p>
+
+    {% endfor %}
+
+</main>
+
+</body>
+</html>

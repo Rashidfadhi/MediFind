@@ -1,0 +1,272 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MediFind | Manage Inventory</title>
+
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+
+    <!-- NAVIGATION -->
+    <nav class="navbar">
+        <h2>MediFind</h2>
+
+        <div class="nav-links">
+            <a href="/owner/dashboard">Dashboard</a>
+            <a href="/owner/inventory">Inventory</a>
+            <a href="/web/logout">Logout</a>
+        </div>
+    </nav>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="dashboard">
+
+        <!-- PAGE HEADER -->
+        <section class="inventory-header">
+            <div>
+                <p class="eyebrow">PHARMACY MANAGEMENT</p>
+
+                <h1>Manage Inventory</h1>
+
+                <p>
+                    Welcome, {{ owner.name }}
+                </p>
+
+                <p>
+                    Pharmacy:
+                    <strong>{{ pharmacy.name }}</strong>
+                </p>
+            </div>
+        </section>
+
+
+        <!-- NOTIFICATIONS -->
+        {% if request.query_params.get("success") %}
+            <div class="success-message">
+                {{ request.query_params.get("success") }}
+            </div>
+        {% endif %}
+
+        {% if request.query_params.get("error") %}
+            <div class="error-message">
+                {{ request.query_params.get("error") }}
+            </div>
+        {% endif %}
+
+
+        <!-- INVENTORY TABLE -->
+        <section class="inventory-section">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Available Medicines</h2>
+                    <p>Manage your pharmacy stock and pricing.</p>
+                </div>
+
+                <span class="inventory-count">
+                    {{ inventory|length }} Items
+                </span>
+            </div>
+
+
+            
+            <div class="table-container">
+
+                <table class="inventory-table">
+
+                    <thead>
+                        <tr>
+                            <th>Medicine</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Update Stock</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for item in inventory %}
+
+                        <tr>
+
+                            <td>
+                                {{ item.medicine.name if item.medicine else "Unknown Medicine" }}
+                            </td>
+
+                            <td>{{ item.quantity }}</td>
+
+                            <td>₹{{ "%.2f"|format(item.price) }}</td>
+
+                            <td>
+                                {% if item.quantity == 0 %}
+                                    <span class="stock-status out">Out of Stock</span>
+                                {% elif item.quantity <= 10 %}
+                                    <span class="stock-status low">Low Stock</span>
+                                {% else %}
+                                    <span class="stock-status available">Available</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+
+                                <form
+                                    action="/owner/inventory/update/{{ item.id }}"
+                                    method="post"
+                                    class="update-stock-form"
+                                >
+
+                                    <input
+                                        type="number"
+                                        name="quantity"
+                                        min="0"
+                                        value="{{ item.quantity }}"
+                                        required
+                                    >
+
+                                    <input
+                                        type="number"
+                                        name="price"
+                                        min="0"
+                                        step="0.01"
+                                        value="{{ item.price }}"
+                                        required
+                                    >
+
+                                    <button type="submit">
+                                        Update
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+                            <td colspan="5" class="empty-inventory">
+                                No medicines available.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ADD MEDICINE FORM -->
+        <section class="add-inventory-section">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Add Medicine</h2>
+
+                    <p>
+                        Add a medicine to your pharmacy inventory.
+                    </p>
+                </div>
+            </div>
+
+
+            <form
+                action="/owner/inventory/add"
+                method="post"
+                class="inventory-form"
+            >
+
+                <div class="form-group">
+
+                    <label for="medicine_id">
+                        Medicine ID
+                    </label>
+
+                    <select id="medicine_id" name="medicine_id" required>
+                        <option value="">Choose a medicine</option>
+                        {% for medicine in medicines %}<option value="{{ medicine.id }}">{{ medicine.name }}{% if medicine.strength %} · {{ medicine.strength }}{% endif %} (ID {{ medicine.id }})</option>{% endfor %}
+                    </select>
+                    {% if not medicines %}<small>No medicines have been added to the catalogue yet. Contact an administrator.</small>{% endif %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="quantity">
+                        Available Quantity
+                    </label>
+
+                    <input
+                        type="number"
+                        id="quantity"
+                        name="quantity"
+                        min="0"
+                        placeholder="Enter quantity"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="price">
+                        Price per Unit (₹)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="price"
+                        name="price"
+                        min="0"
+                        step="0.01"
+                        placeholder="Enter price"
+                        required
+                    >
+
+                </div>
+
+
+                <button type="submit" class="add-inventory-btn">
+                    Add to Inventory
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- BACK BUTTON -->
+        <div class="back-link">
+            <a href="/owner/dashboard">
+                ← Back to Dashboard
+            </a>
+        </div>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>
+            © 2026 MediFind. Medicine Availability & Pharmacy Finder.
+        </p>
+    </footer>
+
+</body>
+</html>
