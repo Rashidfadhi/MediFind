@@ -1,57 +1,196 @@
-# MediFind
+# MediFind 💊
+### Medicine Availability & Pharmacy Finder
 
-MediFind is a FastAPI application for finding medicines at pharmacies. Customers can search available stock and compare prices. Administrators manage the pharmacy and medicine catalogues, and pharmacy owners maintain their inventory.
+**Find medicines. Discover pharmacies. Check availability.**
 
-## Requirements
+MediFind is a web-based medicine availability and pharmacy finder built with FastAPI and MySQL. It helps customers search for medicines and discover pharmacies that have available stock, while allowing pharmacy owners to manage their inventory through a dedicated dashboard.
 
-- Python 3.10 or newer
-- MySQL 8 or a compatible MySQL server
+---
 
-## Install and run (Windows PowerShell)
+## ✨ Key Features
 
-From this directory (`MediFind`):
+### 👤 Customer
+- Search medicines by name or generic name.
+- View pharmacies that have the requested medicine in stock.
+- Check medicine quantity and price.
+- View pharmacy address, landmark and contact information.
+- Call pharmacies directly.
+- Open pharmacy directions using Google Maps.
 
-```powershell
-py -m venv .venv
-.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-Copy-Item .env.example .env
+### 🏪 Pharmacy Owner
+- Access a dedicated pharmacy dashboard.
+- Add medicines to pharmacy inventory.
+- Update available stock quantities.
+- Manage medicine prices.
+
+### 🛡️ Administrator
+- Manage registered pharmacies.
+- Manage medicine information.
+- Manage pharmacy owners.
+- Oversee platform operations.
+
+---
+
+## 🛠️ Technology Stack
+
+| Category | Technologies |
+|---|---|
+| Backend | Python, FastAPI |
+| Database | MySQL |
+| ORM | SQLAlchemy |
+| Validation | Pydantic |
+| Frontend | HTML5, CSS3, JavaScript |
+| Templates | Jinja2 |
+| Authentication | JWT |
+| Server | Uvicorn |
+
+---
+
+## 🏗️ Project Architecture
+
+```text
+MediFind/
+│
+├── app/
+│   ├── main.py
+│   ├── config.py
+│   ├── database.py
+│   ├── dependencies.py
+│   ├── security.py
+│   │
+│   ├── models/
+│   ├── routers/
+│   ├── schemas/
+│   └── templates/
+│
+├── static/
+│   └── css/
+│
+├── .env.example
+├── .gitignore
+├── requirements.txt
+└── README.md
 ```
 
-Create a MySQL database and application user, then update `MEDIFIND_DATABASE_URL` in `.env`. URL-encode special characters in the database password. Replace `MEDIFIND_SECRET_KEY` with a unique secret generated with:
+### Core Database Entities
 
-```powershell
+- **User:** Stores customer, pharmacy owner and administrator accounts.
+- **Pharmacy:** Stores pharmacy details, address and location.
+- **Medicine:** Stores medicine names, brands, generic names and other details.
+- **PharmacyInventory:** Connects pharmacies with medicines and stores stock quantity and price.
+
+---
+
+## ⚙️ Installation and Setup
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Rashidfadhi/MediFind.git
+cd MediFind
+```
+
+### 2. Create a virtual environment
+
+```bash
+python -m venv .venv
+```
+
+Activate it on Windows:
+
+```bash
+.venv\Scripts\activate
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Configure environment variables
+
+Copy the example environment file:
+
+```bash
+copy .env.example .env
+```
+
+Configure your MySQL database connection and application secret in `.env`, following the variable names in `.env.example`.
+
+Generate a secure secret key:
+
+```bash
 python -c "import secrets; print(secrets.token_urlsafe(48))"
 ```
 
-Load the variables from `.env` into the current PowerShell session and start the server:
+Keep your actual `.env` file private. Never commit database credentials or secret keys.
 
-```powershell
-Get-Content .env | ForEach-Object {
-    if ($_ -match '^([^#=]+)=(.*)$') { Set-Item -Path "Env:$($matches[1])" -Value $matches[2] }
-}
+### 5. Create the MySQL database
+
+Create a database in MySQL and configure the database connection in your `.env` file.
+
+### 6. Run the application
+
+Load your environment variables into the terminal, then run:
+
+```bash
 uvicorn app.main:app --reload
 ```
 
-Open <http://127.0.0.1:8000>. API documentation is at <http://127.0.0.1:8000/docs>.
+### 7. Open MediFind
 
-## First administrator
+| Service | URL |
+|---|---|
+| Homepage | http://127.0.0.1:8000 |
+| API Documentation | http://127.0.0.1:8000/docs |
+| Admin Login | http://127.0.0.1:8000/web/login |
 
-Public registration always creates a customer account. To create the first administrator, register an account, then promote it directly in MySQL:
+---
+
+## 🔐 Initial Administrator Setup
+
+Public registration creates customer accounts.
+
+To promote an existing account to administrator, execute the following SQL using your own registered email:
 
 ```sql
-UPDATE users SET role = 'admin' WHERE email = 'your-admin@example.com';
+UPDATE users
+SET role = 'admin'
+WHERE email = 'your-admin@example.com';
 ```
 
-Sign in at `/web/login`. The administrator dashboard lets you add pharmacies and medicines and assign pharmacy owners. Owners must first register as customers.
+Pharmacy owners must register before being assigned to a pharmacy by the administrator.
 
-## Main pages and API
+---
 
-- `/` — medicine search landing page
-- `/registration` and `/web/login` — customer registration and web sign-in
-- `/web/admin/dashboard` — administrator management interface
-- `/owner/dashboard` and `/owner/inventory` — pharmacy owner tools
-- `/docs` — interactive API documentation
-- `/pharmacies`, `/medicines`, `/inventory` — JSON endpoints
+## 🚀 Future Enhancements
 
-The application creates missing tables at startup with SQLAlchemy. For production, run behind HTTPS and set `MEDIFIND_COOKIE_SECURE=true`. Schema changes to existing databases should be applied through a database migration process; `create_all` does not alter existing tables.
+- External medicine information API integration.
+- Improved location-based pharmacy discovery.
+- More advanced medicine search and filtering.
+- Inventory update timestamps.
+- Improved mobile responsiveness.
+- Production deployment and testing.
+
+*These are planned enhancements, not claims about currently implemented functionality.*
+
+---
+
+## 🎯 Project Objective
+
+MediFind aims to simplify the process of finding medicines by connecting customers with local pharmacies through a centralized medicine search and availability platform.
+
+---
+
+## 👨‍💻 Developer
+
+**Rashid Fadhi**
+
+BSc Computer Science
+
+GitHub: https://github.com/Rashidfadhi
+
+---
+
+**MediFind — Making medicine discovery simpler.**
